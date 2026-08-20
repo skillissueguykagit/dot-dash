@@ -6,10 +6,6 @@ Dot&Dash is a browser-based Morse code trainer inspired by the speed and feedbac
 
 Practice encoding and decoding Morse code while tracking **WPM, accuracy, mistakes, streaks, achievements, and progress over time**.
 
-[**Live Demo**](YOUR_LIVE_DEMO_URL)
-
-![Dot\&Dash](docs/screenshot.png)
-
 ---
 
 ## ✨ Features
