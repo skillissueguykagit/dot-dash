@@ -1,83 +1,297 @@
 # Dot&Dash
 
-A Monkeytype-style speed trainer for learning Morse code — type dots and dashes to encode text, or listen and decode by ear, with live WPM/accuracy tracking, achievements, and a daily challenge.
+### A Morse Code Speed Trainer
 
-**🔗 Live demo (no setup, works instantly):** enable GitHub Pages for this repo (Settings → Pages → Source: `main` branch, `/docs` folder) and it'll be live at `https://YOUR-USERNAME.github.io/dotanddash/` — the file in `docs/index.html` is a fully self-contained prototype with zero dependencies.
+Dot&Dash is a browser-based Morse code trainer inspired by the speed and feedback loop of tools like Monkeytype.
 
-**This repo contains two things:**
-1. **`docs/index.html`** — the original single-file prototype. Open it directly in any browser, or host it free via GitHub Pages as above. Local-only stats (no account sync).
-2. **Everything else** — a real Next.js + Supabase backend version with proper accounts, cross-device sync, and server-validated stats. See below for setup.
+Practice encoding and decoding Morse code while tracking **WPM, accuracy, mistakes, streaks, achievements, and progress over time**.
+
+[**Live Demo**](YOUR_LIVE_DEMO_URL)
+
+![Dot\&Dash](docs/screenshot.png)
 
 ---
 
-# Dot&Dash — Next.js + Supabase (backend version)
+## ✨ Features
 
+* **Real-time WPM & accuracy** tracking
+* **Multiple practice modes**
 
-A real backend for the Dot&Dash Morse code trainer: accounts that sync across devices, a Postgres database via Supabase, and server-validated stats/achievements. This replaces the single-file prototype's `localStorage`-only persistence.
+  * Letters
+  * Words
+  * Sentences
+  * Numbers
+  * Mixed
+* **Morse audio training** with Farnsworth timing
+* **Progress tracking** across practice sessions
+* **17 achievements** to unlock
+* **Daily challenges**
+* **Weak-symbol tracking** to identify characters that need more practice
+* **Profile & statistics dashboard** with charts
+* **CSV export** for your practice data
+* **Authentication** with Supabase
+* **Cross-device synchronization**
+* **Server-side statistics validation**
 
-**Read `HANDOFF.md` (from the original project) first if you have it** — it documents every system this was ported from in detail (audio timing math, the practice state machine, ghost replay design, etc.).
+---
 
-## What's actually working here
+## 🖥️ Two Versions
 
-- **Real auth** — Supabase Auth (email + password), proper sessions via cookies, no more `btoa()`-obfuscated passwords
-- **Cross-device sync** — every stat lives in Postgres, not the browser
-- **Practice mode** — Letters, Words, Sentences, Numbers, Mixed, with the same combined amount+time bounds, backspace-to-fix error handling, and shuffle-bag/procedural-sentence content generation as the original
-- **Server-side stat aggregation** — `POST /api/tests` updates best WPM, accuracy average, day streak, cumulative per-symbol mistakes, and checks all 17 achievements, atomically enough for normal single-user use (see the note in that file about upgrading to a Postgres function if you need true concurrency safety)
-- **Profile page** — real charts (Recharts) pulling from the database, weakest-symbols list, achievements grid, CSV export
-- **Daily Challenge word generation** — moved server-side (`/api/daily`) so the "same content for everyone" guarantee is real, not just a client-side convention
-- Full Morse engine, Farnsworth-timing-capable audio engine, and achievement definitions ported as pure, dependency-free TypeScript (`src/lib/morse.ts`, `src/lib/audio.ts`, `src/lib/achievements.ts`)
+Dot&Dash started as a lightweight single-page prototype and was later expanded into a full-stack application.
 
-## What's stubbed / not yet wired into the UI
+### Prototype
 
-The **logic** for these mostly already exists in the ported libraries — they just don't have pages/components yet:
+`docs/index.html`
 
-- **Reverse mode** (`playLetters` in `src/lib/audio.ts` already supports it fully, including Farnsworth and the per-symbol sync callback for a flashing lamp — needs a `/reverse` page)
-- **Custom & Weak Symbols practice modes** (`makeModeGenerator` in `src/lib/morse.ts` already handles both — needs the character-picker panel and a fetch of `symbol_mistakes` from Supabase)
-- **Daily Challenge UI + Ghost Replay** (`/api/daily` already returns deterministic words and any existing ghost timeline — needs the page, and the word-level ghost-marker rendering from the original)
-- **Cheat sheet** (just needs a page rendering `MORSE` as a searchable grid — no new logic required)
-- **Theme switcher UI** (the CSS variables for all 6 themes are already in `globals.css` — just needs the swatch buttons that set `data-theme` on `<html>`)
-- **Global/daily leaderboards** (the `daily_results` table already has a public-read RLS policy for exactly this — needs a query + page)
-- **Achievement toast notifications** (currently shown inline on the results panel after a test; the original had animated corner toasts)
+A completely self-contained Morse code trainer that runs directly in the browser.
 
-None of this is hard — it's the same pattern as what's already built (call the lib function, render the result), just more pages to wire up.
+* Zero dependencies
+* No backend required
+* Local-only statistics
+* Can be hosted directly with GitHub Pages
 
-## Setup
+### Full-Stack Version
 
-1. **Create a Supabase project** at [supabase.com](https://supabase.com) (free tier is plenty to start).
-2. **Run the schema**: open the SQL Editor in your Supabase dashboard and paste in the entire contents of `supabase/schema.sql`, then run it. This creates all tables, RLS policies, and the auto-profile-creation trigger.
-3. **Copy environment variables**: `cp .env.example .env.local`, then fill in `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` from your Supabase project's Settings → API page.
-4. **Install and run**:
-   ```bash
-   npm install
-   npm run dev
-   ```
-   Open `http://localhost:3000` — it redirects straight to `/practice`, same as the original.
-5. **Email confirmation**: Supabase requires email confirmation by default. For local development, you can turn this off in your Supabase project under Authentication → Providers → Email → "Confirm email" toggle, so signup logs you straight in.
+`src/`
 
-## Deploying
+The main application is built with **Next.js + Supabase** and adds:
 
-- **Vercel** (free tier) is the natural fit for the Next.js app — connect the repo, add the same two environment variables in Vercel's project settings, deploy.
-- Supabase stays where it is; nothing else to configure.
+* User accounts
+* Persistent database storage
+* Cross-device synchronization
+* Server-side statistics
+* Achievements
+* Profile analytics
+* Daily challenge infrastructure
 
-## Project structure
+---
 
+## 🧠 How It Works
+
+The practice engine generates Morse training content using a shuffle-bag system and procedural generation.
+
+During a test, Dot&Dash tracks:
+
+* Characters typed
+* Correct and incorrect inputs
+* Timing
+* WPM
+* Accuracy
+* Per-symbol mistakes
+
+Completed tests are sent to the backend, where the user's statistics and achievements are updated.
+
+The Morse engine and audio engine are implemented as independent TypeScript modules, keeping the core training logic separate from the UI.
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology        | Purpose                              |
+| ----------------- | ------------------------------------ |
+| **Next.js**       | Application framework                |
+| **React**         | UI                                   |
+| **TypeScript**    | Application logic                    |
+| **Tailwind CSS**  | Styling                              |
+| **Supabase**      | Authentication & PostgreSQL database |
+| **Recharts**      | Statistics visualisation             |
+| **Web Audio API** | Morse audio generation               |
+
+---
+
+## 📁 Project Structure
+
+```text
+dot-dash/
+├── docs/
+│   └── index.html              # Standalone browser prototype
+│
+├── src/
+│   ├── app/
+│   │   ├── practice/           # Main practice interface
+│   │   ├── profile/            # Statistics & achievements
+│   │   ├── login/              # Authentication
+│   │   ├── signup/             # Account creation
+│   │   └── api/
+│   │       ├── tests/           # Test submission & statistics
+│   │       ├── stats/           # User statistics
+│   │       └── daily/           # Daily challenge data
+│   │
+│   ├── components/             # Reusable UI components
+│   ├── hooks/
+│   │   └── usePracticeEngine.ts
+│   │
+│   └── lib/
+│       ├── morse.ts             # Morse data & generation
+│       ├── audio.ts             # Web Audio / Farnsworth timing
+│       ├── achievements.ts      # Achievement definitions
+│       └── supabase/             # Supabase clients
+│
+├── supabase/
+│   └── schema.sql               # Database schema & RLS policies
+│
+├── .env.example
+├── next.config.mjs
+├── package.json
+└── README.md
 ```
-src/
-  app/
-    practice/page.tsx       — main typing test (client component)
-    profile/page.tsx        — stats, charts, achievements, CSV export
-    login/, signup/         — Supabase Auth forms
-    api/tests/route.ts      — records a completed test, updates all aggregates + achievements
-    api/stats/route.ts      — fetches a user's full stats bundle
-    api/daily/route.ts      — serves the deterministic Daily Challenge word list
-  lib/
-    morse.ts                — Morse data + content generation (shuffle-bag, seeded RNG, sentence grammar)
-    audio.ts                — Web Audio engine with Farnsworth timing
-    achievements.ts         — the 17 achievement definitions
-    supabase/                — browser/server Supabase client factories
-  hooks/
-    usePracticeEngine.ts    — the practice test state machine, as a React reducer
-  components/               — WordStream, ConfigBar, LiveStatsBar, ResultsPanel, TrendChart
-supabase/
-  schema.sql                — run this once in the Supabase SQL editor
+
+---
+
+## 🚀 Getting Started
+
+### Requirements
+
+* Node.js 18+
+* npm
+* A Supabase project
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/skillissueguykagit/dot-dash.git
+cd dot-dash
 ```
+
+### 2. Create a Supabase project
+
+Create a project on [Supabase](https://supabase.com/).
+
+Then open the **SQL Editor** and run:
+
+```text
+supabase/schema.sql
+```
+
+This creates the required tables, Row Level Security policies, and profile trigger.
+
+### 3. Configure environment variables
+
+Copy the example environment file:
+
+```bash
+cp .env.example .env.local
+```
+
+Add your Supabase credentials:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+You can find these in your Supabase project's API settings.
+
+### 4. Install dependencies
+
+```bash
+npm install
+```
+
+### 5. Start the development server
+
+```bash
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+---
+
+## ☁️ Deployment
+
+### Next.js application
+
+The full-stack version can be deployed to **Vercel**.
+
+1. Import the repository into Vercel.
+2. Add:
+
+   * `NEXT_PUBLIC_SUPABASE_URL`
+   * `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+3. Deploy.
+
+Supabase handles authentication and database storage separately.
+
+### Prototype
+
+The standalone prototype in `docs/index.html` can be deployed using GitHub Pages.
+
+Enable GitHub Pages for the repository using:
+
+```text
+Settings → Pages → Deploy from a branch
+Branch: main
+Folder: /docs
+```
+
+---
+
+## 🗺️ Roadmap
+
+The following features have their underlying logic implemented or partially implemented but still need UI integration:
+
+* [ ] Reverse mode
+* [ ] Custom symbol practice
+* [ ] Weak-symbol practice mode
+* [ ] Daily challenge interface
+* [ ] Ghost replay
+* [ ] Morse code cheat sheet
+* [ ] Theme switcher
+* [ ] Global leaderboard
+* [ ] Daily leaderboard
+* [ ] Achievement toast notifications
+
+---
+
+## 📊 Statistics
+
+Dot&Dash tracks more than a single WPM score.
+
+The profile system records:
+
+* Best WPM
+* Average accuracy
+* Practice streaks
+* Cumulative symbol mistakes
+* Test history
+* Achievement progress
+* Weakest Morse symbols
+
+This makes the trainer useful for identifying **which parts of Morse code you actually struggle with**, rather than simply measuring how fast you can type.
+
+---
+
+## 🔐 Security
+
+Authentication and persistent data are handled through Supabase.
+
+The application uses:
+
+* Supabase Auth
+* Server-side API routes
+* PostgreSQL
+* Row Level Security
+* Server-side statistic aggregation
+
+Sensitive environment variables should be stored in `.env.local` and must never be committed to the repository.
+
+---
+
+## 📄 License
+
+Dot&Dash is released under the **MIT License**.
+
+See [`LICENSE`](LICENSE) for details.
+
+---
+
+## 👤 Author
+
+**Mayank Pradhan**
+
+GitHub: [@skillissueguykagit](https://github.com/skillissueguykagit)
