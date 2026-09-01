@@ -8,7 +8,7 @@ Practice encoding and decoding Morse code while tracking **WPM, accuracy, mistak
 
 ---
 
-## ✨ Features
+##  Features
 
 * **Real-time WPM & accuracy** tracking
 * **Multiple practice modes**
@@ -31,7 +31,7 @@ Practice encoding and decoding Morse code while tracking **WPM, accuracy, mistak
 
 ---
 
-## 🖥️ Two Versions
+##  Two Versions
 
 Dot&Dash started as a lightweight single-page prototype and was later expanded into a full-stack application.
 
@@ -62,7 +62,7 @@ The main application is built with **Next.js + Supabase** and adds:
 
 ---
 
-## 🧠 How It Works
+##  How It Works
 
 The practice engine generates Morse training content using a shuffle-bag system and procedural generation.
 
@@ -227,7 +227,7 @@ Folder: /docs
 
 ---
 
-## 🗺️ Roadmap
+##  Roadmap
 
 The following features have their underlying logic implemented or partially implemented but still need UI integration:
 
@@ -244,7 +244,7 @@ The following features have their underlying logic implemented or partially impl
 
 ---
 
-## 📊 Statistics
+##  Statistics
 
 Dot&Dash tracks more than a single WPM score.
 
@@ -262,7 +262,7 @@ This makes the trainer useful for identifying **which parts of Morse code you ac
 
 ---
 
-## 🔐 Security
+##  Security
 
 Authentication and persistent data are handled through Supabase.
 
@@ -278,7 +278,7 @@ Sensitive environment variables should be stored in `.env.local` and must never 
 
 ---
 
-## 📄 License
+## License
 
 Dot&Dash is released under the **MIT License**.
 
