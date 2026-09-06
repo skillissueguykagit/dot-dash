@@ -81,7 +81,7 @@ The Morse engine and audio engine are implemented as independent TypeScript modu
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Technology        | Purpose                              |
 | ----------------- | ------------------------------------ |
@@ -95,7 +95,7 @@ The Morse engine and audio engine are implemented as independent TypeScript modu
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```text
 dot-dash/
@@ -134,7 +134,7 @@ dot-dash/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Requirements
 
@@ -198,7 +198,7 @@ http://localhost:3000
 
 ---
 
-## ☁️ Deployment
+##  Deployment
 
 ### Next.js application
 
@@ -286,7 +286,7 @@ See [`LICENSE`](LICENSE) for details.
 
 ---
 
-## 👤 Author
+##  Author
 
 **Mayank Pradhan**
 
